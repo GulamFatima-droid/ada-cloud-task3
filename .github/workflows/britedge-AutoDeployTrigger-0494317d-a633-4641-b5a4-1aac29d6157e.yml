@@ -37,7 +37,7 @@ jobs:
           registryPassword: ${{ secrets.BRITEDGE_REGISTRY_PASSWORD }}
           containerAppName: britedge
           resourceGroup: AdaCloudTasks
-          imageToBuild: g.ahmadnaz@gmail.com/fahma0/britedge:${{ github.sha }}
+          imageToBuild: fahma0/britedge:${{ github.sha }}
           
             
 
