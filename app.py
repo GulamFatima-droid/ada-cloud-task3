@@ -4,6 +4,12 @@ from config import Config
 from extensions import db, login_manager
 from datetime import datetime, timezone
 from dotenv import load_dotenv
+from opencensus.ext.azure.log_exporter import AzureLogHandler
+from opencensus.ext.azure.trace_exporter import AzureExporter
+from opencensus.trace.samplers import ProbabilitySampler
+from opencensus.ext.flask.flask_middleware import FlaskMiddleware
+import logging
+import os
 
 # Load environment variables from .env file
 load_dotenv()
