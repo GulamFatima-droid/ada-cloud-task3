@@ -13,6 +13,18 @@ app = Flask(__name__)
 # Load configuration from Config class
 app.config.from_object(Config)
 
+# Application Insights integration
+app_insights_conn_str = os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING")
+if app_insights_conn_str:
+    logger = logging.getLogger(__name__)
+    logger.addHandler(AzureLogHandler(connection_string=app_insights_conn_str))
+
+    middleware = FlaskMiddleware(
+        app,
+        exporter=AzureExporter(connection_string=app_insights_conn_str),
+        sampler=ProbabilitySampler(rate=1.0),
+    )
+
 # Initialise SQLAlchemy with the Flask app
 db.init_app(app)
 login_manager.init_app(app)
