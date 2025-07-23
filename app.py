@@ -23,7 +23,8 @@ app.config.from_object(Config)
 # Application Insights integration
 app_insights_conn_str = os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING")
 if app_insights_conn_str:
-    logger = logging.getLogger(__name__)
+    logger = logging.getLogger("britedgeLogger")
+    logger.setLevel(logging.DEBUG)
     logger.addHandler(AzureLogHandler(connection_string=app_insights_conn_str))
 
     middleware = FlaskMiddleware(
@@ -32,17 +33,7 @@ if app_insights_conn_str:
         sampler=ProbabilitySampler(rate=1.0),
     )
 
-
-configure_azure_monitor(
-    logger_name="britedgeLogger",  
-)
-
-logger = logging.getLogger("britedgeLogger")  
-logger.setLevel(logging.DEBUG)  
-
-
-for handler in logger.handlers:
-    handler.setLevel(logging.DEBUG)
+    configure_azure_monitor(logger_name="britedgeLogger")
 
 # Initialise SQLAlchemy with the Flask app
 db.init_app(app)
@@ -74,5 +65,5 @@ if __name__ == '__main__':
     # Run the Flask application
     # debug=True allows for automatic reloading on code changes and provides a debugger.
     # IMPORTANT: debug=True should NEVER be used in a production environment.
-    app.run(debug=True, port=8080)
+    app.run(host='0.0.0.0', debug=False, port=8080)
 
