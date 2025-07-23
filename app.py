@@ -30,6 +30,8 @@ if app_insights_conn_str:
     )
 
     configure_azure_monitor(logger_name="britedgeLogger")
+    configure_azure_monitor(enable_live_metrics=True)
+   
 
 
 db.init_app(app)
@@ -56,7 +58,7 @@ def inject_now():
 def handle_exception(e):
     logger.error(f"Unhandled Exception: {e}", exc_info=True)
     return "An internal error occurred.", 500
-    
+
 
 if __name__ == '__main__':
     logger.info("Starting Flask application.")
