@@ -8,3 +8,4 @@ Werkzeug
 opencensus-ext-azure
 opencensus-ext-flask
 opencensus-ext-logging
+azure-monitor-opentelemetry

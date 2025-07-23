@@ -10,6 +10,7 @@ from opencensus.trace.samplers import ProbabilitySampler
 from opencensus.ext.flask.flask_middleware import FlaskMiddleware
 import logging
 import os
+from azure.monitor.opentelemetry import configure_azure_monitor
 
 # Load environment variables from .env file
 load_dotenv()
@@ -30,6 +31,18 @@ if app_insights_conn_str:
         exporter=AzureExporter(connection_string=app_insights_conn_str),
         sampler=ProbabilitySampler(rate=1.0),
     )
+
+
+configure_azure_monitor(
+    logger_name="britedgeLogger",  
+)
+
+logger = logging.getLogger("britedgeLogger")  
+logger.setLevel(logging.DEBUG)  
+
+
+for handler in logger.handlers:
+    handler.setLevel(logging.DEBUG)
 
 # Initialise SQLAlchemy with the Flask app
 db.init_app(app)
