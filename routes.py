@@ -1,6 +1,6 @@
 # routes.py
 from flask import render_template, url_for, flash, redirect, request
-from app import app, db
+from app import app, db, logger
 from models import User, Job # Import User and Job models
 from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -11,11 +11,14 @@ def home():
     """
     Home page route. Displays all jobs.
     """
-    # Query all jobs from the database, ordered by date posted (newest first)
     jobs = Job.query.order_by(Job.date_posted.desc()).all()
-    # Add a formatted_date attribute to each job
+
+    if not jobs:
+        logger.info("No jobs found in the database.")
+
     for job in jobs:
         job.formatted_date = job.date_posted.strftime('%Y-%m-%d')
+
     return render_template('index.html', jobs=jobs)
 
 @app.route("/register", methods=['GET', 'POST'])
@@ -61,10 +64,12 @@ def register():
             db.session.add(user)
             db.session.commit()
             flash('Your account has been created! You are now able to log in.', 'success')
+            logger.info(f"New user registered: {username}")
             return redirect(url_for('login'))
         except Exception as e:
             db.session.rollback()
             flash(f'An error occurred during registration: {e}', 'danger')
+            logger.error(f"Error during registration: {e}")
             print(f"Error during registration: {e}") # Log the error for debugging
             return render_template('register.html')
 
@@ -92,9 +97,11 @@ def login():
             # Redirect to the page the user was trying to access before logging in, or home
             next_page = request.args.get('next')
             flash('Login successful!', 'success')
+            logger.info(f"User {user.username} logged in successfully.")
             return redirect(next_page or url_for('home'))
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
+            logger.warning(f"Failed login attempt for email: {email}")
 
     return render_template('login.html')
 
@@ -107,6 +114,7 @@ def logout():
     """
     logout_user()
     flash('You have been logged out.', 'info')
+    logger.info(f"User {current_user.username} logged out successfully.")
     return redirect(url_for('home'))
 
 @app.route("/job/new", methods=['GET', 'POST'])
@@ -130,11 +138,13 @@ def new_job():
             db.session.add(job)
             db.session.commit()
             flash('Your job has been created!', 'success')
+            logger.info(f"New job created: {job.title} by {current_user.username}")
             return redirect(url_for('home'))
         except Exception as e:
             db.session.rollback()
             flash(f'An error occurred while creating the job: {e}', 'danger')
             print(f"Error creating job: {e}")
+            logger.error(f"Error creating job: {e}")
             return render_template('create_job.html', title='New Job')
 
     return render_template('create_job.html', title='New Job')
@@ -172,11 +182,13 @@ def update_job(job_id):
         try:
             db.session.commit()
             flash('Your job has been updated!', 'success')
+            logger.info(f"Job updated: {job.title} by {current_user.username}")
             return redirect(url_for('job_detail', job_id=job.id))
         except Exception as e:
             db.session.rollback()
             flash(f'An error occurred while updating the job: {e}', 'danger')
             print(f"Error updating job: {e}")
+            logger.error(f"Error updating job: {e}")
             return render_template('create_job.html', title='Update Job', job=job)
 
     return render_template('create_job.html', title='Update Job', job=job)
@@ -198,10 +210,12 @@ def delete_job(job_id):
         db.session.delete(job)
         db.session.commit()
         flash('Your job has been deleted!', 'success')
+        logger.info(f"Job deleted: {job.title} by {current_user.username}")
         return redirect(url_for('home'))
     except Exception as e:
         db.session.rollback()
         flash(f'An error occurred while deleting the job: {e}', 'danger')
         print(f"Error deleting job: {e}")
+        logger.error(f"Error deleting job: {e}")
         return redirect(url_for('job_detail', job_id=job.id))
 
