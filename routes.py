@@ -114,7 +114,7 @@ def logout():
     """
     logout_user()
     flash('You have been logged out.', 'info')
-    logger.info(f"User {current_user.username} logged out successfully.")
+    logger.info(f"Current user logged out successfully.")
     return redirect(url_for('home'))
 
 @app.route("/job/new", methods=['GET', 'POST'])
