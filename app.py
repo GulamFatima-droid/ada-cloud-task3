@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from config import Config
 from extensions import db, login_manager
 from datetime import datetime, timezone
@@ -58,6 +58,11 @@ def inject_now():
 def handle_exception(e):
     logger.error(f"Unhandled Exception: {e}", exc_info=True)
     return "An internal error occurred.", 500
+
+@app.errorhandler(404)
+def not_found_error(e):
+    logger.warning(f"404 Not Found: {request.path}")
+    return "Page not found.", 404
 
 
 if __name__ == '__main__':
