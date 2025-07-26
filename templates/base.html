@@ -55,7 +55,7 @@
         <p>Authenticated: {{ current_user.is_authenticated }}</p>
         <p>User ID: {{ current_user.get_id() }}</p>
     </div>
-    <header class="bg-yellow-500 text-white p-4 shadow-md">
+    <header class="bg-pink-500 text-white p-4 shadow-md">
         <div class="container mx-auto flex justify-between items-center">
              <img src="{{ url_for('static', filename='britedge.jpg') }}" alt="BritEdge Logo" class="h-12 w-auto rounded shadow" style="max-height:50px;">
             <a href="{{ url_for('home') }}" class="text-2xl font-bold rounded-lg p-2 hover:bg-blue-700 transition duration-200">BritEdge Job Scheduling System</a>
@@ -92,7 +92,7 @@
 
     <footer class="bg-gray-800 text-white p-4 mt-8">
         <div class="container mx-auto text-center">
-            <p>&copy; {{ now.year }} BritttEdge. All rights reserved.</p>
+            <p>&copy; {{ now.year }} BritEdge. All rights reserved.</p>
         </div>
     </footer>
 </body>
